@@ -22,7 +22,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mogrify, "~> 0.5.5"}
+      {:mogrify, github: "rcode5/mogrify", branch: "features/add-histogram-generator"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]

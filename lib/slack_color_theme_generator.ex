@@ -19,7 +19,9 @@ defmodule SlackColorThemeGenerator do
   end
 
   defp generate_theme(file) do
-    open(file) |> custom("posterize", 8) |> verbose |> save |> IO.inspect
+    open(file)
+    |> histogram(8)
+    |> IO.inspect
   end
 
 end
