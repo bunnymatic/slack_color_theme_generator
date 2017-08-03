@@ -21,7 +21,8 @@ defmodule SlackColorThemeGenerator do
   defp generate_theme(file) do
     open(file)
     |> histogram(8)
-    |> IO.inspect
+    |> Enum.join(",")
+    |> IO.puts
   end
 
 end
