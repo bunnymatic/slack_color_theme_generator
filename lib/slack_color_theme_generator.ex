@@ -1,5 +1,4 @@
 import Mogrify
-
 defmodule SlackColorThemeGenerator do
   @moduledoc """
   Generate a Slack color theme (8 hex colors) from an image
@@ -19,10 +18,23 @@ defmodule SlackColorThemeGenerator do
   end
 
   defp generate_theme(file) do
-    open(file)
+    histogram_data = open(file)
+    |> custom("-level", "30%")
+    |> custom("-colors", 8)
+    |> custom("+dither")
     |> histogram(8)
+    |> inspector
+    |> Enum.map(fn {h} -> h["count"] end)
+
+
+    histogram_data
+    |> Enum.map(fn {h} -> h["hex"] end)
     |> Enum.join(",")
     |> IO.puts
   end
+
+  defp inspector(v,s), do: (IO.puts("[#{s}] #{inspect(v)}"); v)
+  defp inspector(v), do: (IO.puts("[check] #{inspect(v)}"); v)
+
 
 end
