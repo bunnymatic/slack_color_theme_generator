@@ -23,12 +23,10 @@ defmodule SlackColorThemeGenerator do
     |> custom("-colors", 8)
     |> custom("+dither")
     |> histogram(8)
-    |> inspector
-    |> Enum.map(fn {h} -> h["count"] end)
-
+    |> Enum.sort_by(fn %{"count" => count} -> count end)
 
     histogram_data
-    |> Enum.map(fn {h} -> h["hex"] end)
+    |> Enum.map(fn %{"hex" => hex} -> hex end)
     |> Enum.join(",")
     |> IO.puts
   end
