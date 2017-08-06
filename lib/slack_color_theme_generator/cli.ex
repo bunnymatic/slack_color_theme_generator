@@ -1,5 +1,6 @@
 defmodule SlackColorThemeGenerator.CLI do
   def main(args) do
-    args |> Enum.at(0) |>  SlackColorThemeGenerator.generate
+    args
+    |> Enum.map(&SlackColorThemeGenerator.generate/1)
   end
 end

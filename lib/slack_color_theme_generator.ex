@@ -1,4 +1,3 @@
-import Mogrify
 defmodule SlackColorThemeGenerator do
   @moduledoc """
   Generate a Slack color theme (8 hex colors) from an image
@@ -14,25 +13,32 @@ defmodule SlackColorThemeGenerator do
 
   """
   def generate(file) do
-    file |> generate_theme
-  end
-
-  defp generate_theme(file) do
-    histogram_data = open(file)
-    |> custom("-level", "30%")
-    |> custom("-colors", 8)
-    |> custom("+dither")
-    |> histogram(8)
-    |> Enum.sort_by(fn %{"count" => count} -> count end)
-
-    histogram_data
-    |> Enum.map(fn %{"hex" => hex} -> hex end)
-    |> Enum.join(",")
+    file
+    |> generate_theme
     |> IO.puts
   end
 
-  defp inspector(v,s), do: (IO.puts("[#{s}] #{inspect(v)}"); v)
-  defp inspector(v), do: (IO.puts("[check] #{inspect(v)}"); v)
+  defp generate_theme(file) do
+    histogram(file)
+    |> Enum.sort_by(fn %{"count" => count} -> count end)
+    |> join_hex_colors
+  end
 
+  defp join_hex_colors(hist) do
+    hist
+    |> Enum.map(fn %{"hex" => hex} -> hex end)
+    |> Enum.join(",")
+  end
+
+  defp histogram(file) do
+    Mogrify.open(file)
+    |> Mogrify.custom("-level", "30%")
+    |> Mogrify.custom("-colors", 8)
+    |> Mogrify.custom("+dither")
+    |> Mogrify.histogram(8)
+  end
+
+  # defp inspector(v,s), do: (IO.puts("[#{s}] #{inspect(v)}"); v)
+  # defp inspector(v), do: (IO.puts("[check] #{inspect(v)}"); v)
 
 end
