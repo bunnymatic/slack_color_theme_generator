@@ -38,7 +38,4 @@ defmodule SlackColorThemeGenerator do
     |> Mogrify.histogram(8)
   end
 
-  # defp inspector(v,s), do: (IO.puts("[#{s}] #{inspect(v)}"); v)
-  # defp inspector(v), do: (IO.puts("[check] #{inspect(v)}"); v)
-
 end

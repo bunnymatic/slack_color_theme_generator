@@ -1,4 +1,9 @@
-defmodule SlackColorThemeGenerator.SlackBot do
+defmodule SlackBot do
+  @moduledoc """
+  Listen and respond to slack events
+  """
+
+  use Inspector
   use Slack
 
   def handle_connect(slack, state) do
@@ -6,12 +11,21 @@ defmodule SlackColorThemeGenerator.SlackBot do
     {:ok, state}
   end
 
+  def handle_event(message = %{type: "message", file: file}, slack, state) do
+    send_message("I got a file!", message.channel, slack)
+    file
+    |> inspector("handle_event - file")
+    |> Map.get(:url_private)
+    |> SlackClient.fetch_image
+    {:ok, state}
+  end
+
   def handle_event(message = %{type: "message"}, slack, state) do
-    message |> inspector
     send_message("I got a message!", message.channel, slack)
 
     {:ok, state}
   end
+
   def handle_event(_, _, state), do: {:ok, state}
 
   def handle_info({:message, text, channel}, slack, state) do
@@ -22,8 +36,5 @@ defmodule SlackColorThemeGenerator.SlackBot do
     {:ok, state}
   end
   def handle_info(_, _, state), do: {:ok, state}
-
-  defp inspector(v,s), do: (IO.puts("[#{s}] #{inspect(v)}"); v)
-  defp inspector(v), do: (IO.puts("[check] #{inspect(v)}"); v)
 
 end
