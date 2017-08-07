@@ -15,11 +15,11 @@ defmodule SlackColorThemeGenerator do
   def generate(file) do
     file
     |> generate_theme
-    |> IO.puts
   end
 
   defp generate_theme(file) do
-    histogram(file)
+    file
+    |> histogram
     |> Enum.sort_by(fn %{"count" => count} -> count end)
     |> join_hex_colors
   end

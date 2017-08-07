@@ -15,12 +15,16 @@ defmodule SlackClient do
     resp = get(image_url, headers: headers)
     |> inspector("GET response")
 
-    {:ok, path} = Briefly.create
-    path
-    |> inspector("Tempfile")
-    |> File.write(resp.body)
-    |> inspector
-    {:ok, path}
+    if (resp.status != 200) do
+      { :error, resp }
+    else
+      {:ok, path} = Briefly.create
+      path
+      |> inspector("Tempfile")
+      |> File.write(resp.body)
+      |> inspector("write")
+      {:ok, path}
+    end
   end
 
   defp slack_token do

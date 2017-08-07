@@ -13,10 +13,12 @@ defmodule SlackBot do
 
   def handle_event(message = %{type: "message", file: file}, slack, state) do
     send_message("I got a file!", message.channel, slack)
-    file
-    |> inspector("handle_event - file")
+    resp = file
     |> Map.get(:url_private)
     |> SlackClient.fetch_image
+    |> process_image
+    |> send_theme(message.channel, slack)
+
     {:ok, state}
   end
 
@@ -36,5 +38,22 @@ defmodule SlackBot do
     {:ok, state}
   end
   def handle_info(_, _, state), do: {:ok, state}
+
+  def send_theme({:ok, theme}, channel, slack) do
+    send_message("Try this theme", channel, slack)
+    send_message(theme, channel, slack)
+  end
+
+  def send_theme(_resp, _channel, _slack) do; end
+
+  def process_image({ :ok, file_path }) do
+    theme = file_path |> SlackColorThemeGenerator.generate
+    { :ok, theme }
+  end
+
+  def process_image({ :error, resp }) do
+    IO.puts("fail #{resp.status}")
+    { :error, resp.status }
+  end
 
 end
