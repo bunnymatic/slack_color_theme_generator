@@ -29,10 +29,8 @@ defmodule SlackBot do
   end
 
   def handle_event(message = %{type: "message", message: %{ attachments: attachments }}, slack, state) do
-    attachments |> inspector
     attachments
     |> Enum.map( fn %{:image_url => url} -> url end )
-    |> inspector("images")
     |> Enum.each( fn img ->
       img
       |> SlackClient.fetch_image
@@ -67,7 +65,12 @@ defmodule SlackBot do
 
   def process_image({ :ok, file_path }) do
     theme = file_path |> SlackColorThemeGenerator.generate
-    { :ok, theme }
+
+    case theme do
+         "" -> { :error, "no theme created" }
+         nil -> { :error, "no theme created" }
+         _ -> { :ok, theme }
+       end
   end
 
   def process_image({ :error, resp }) do

@@ -16,7 +16,6 @@ defmodule SlackClient do
   end
 
   def fetch_image(image_url) do
-    image_url |> inspector("fetch image")
     get(image_url)
     |> process_response
   end
