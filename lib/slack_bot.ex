@@ -2,31 +2,50 @@ defmodule SlackBot do
   @moduledoc """
   Listen and respond to slack events
   """
+  require Logger
 
+  use Application
   use Inspector
   use Slack
 
+  def start(_type, _args) do
+    Logger.info( fn -> "Starting SlackBot..." end )
+    Slack.Bot.start_link(SlackBot, [], System.get_env("SLACK_API_TOKEN"))
+  end
+
   def handle_connect(slack, state) do
-    IO.puts "Connected as #{slack.me.name}"
+    Logger.info( fn -> "Connected to slack as #{slack.me.name}" end )
     {:ok, state}
   end
 
   def handle_event(message = %{type: "message", file: file}, slack, state) do
-    send_message("I got a file!", message.channel, slack)
-    resp = file
+    file
     |> Map.get(:url_private)
-    |> SlackClient.fetch_image
+    |> SlackClient.fetch_image_from_slack
     |> process_image
     |> send_theme(message.channel, slack)
 
     {:ok, state}
   end
 
-  def handle_event(message = %{type: "message"}, slack, state) do
-    send_message("I got a message!", message.channel, slack)
+  def handle_event(message = %{type: "message", message: %{ attachments: attachments }}, slack, state) do
+    attachments |> inspector
+    attachments
+    |> Enum.map( fn %{:image_url => url} -> url end )
+    |> inspector("images")
+    |> Enum.each( fn img ->
+      img
+      |> SlackClient.fetch_image
+      |> process_image
+      |> send_theme(message.channel, slack)
+    end )
 
     {:ok, state}
   end
+
+  # def handle_event(message = %{type: "message"}, slack, state) do
+  #   {:ok, state}
+  # end
 
   def handle_event(_, _, state), do: {:ok, state}
 
@@ -40,7 +59,7 @@ defmodule SlackBot do
   def handle_info(_, _, state), do: {:ok, state}
 
   def send_theme({:ok, theme}, channel, slack) do
-    send_message("Try this theme", channel, slack)
+    send_message("Theme it up!", channel, slack)
     send_message(theme, channel, slack)
   end
 

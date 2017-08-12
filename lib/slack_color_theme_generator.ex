@@ -12,6 +12,9 @@ defmodule SlackColorThemeGenerator do
       #ffffff,#bavava,...
 
   """
+
+  use Inspector
+
   def generate(file) do
     file
     |> generate_theme
@@ -20,6 +23,7 @@ defmodule SlackColorThemeGenerator do
   defp generate_theme(file) do
     file
     |> histogram
+    |> inspector
     |> Enum.sort_by(fn %{"count" => count} -> count end)
     |> join_hex_colors
   end
@@ -32,10 +36,13 @@ defmodule SlackColorThemeGenerator do
 
   defp histogram(file) do
     Mogrify.open(file)
+    |> Mogrify.custom("-background", "white")
+    |> Mogrify.custom("-alpha", "remove")
     |> Mogrify.custom("-level", "30%")
     |> Mogrify.custom("-colors", 8)
     |> Mogrify.custom("+dither")
-    |> Mogrify.histogram(8)
+    |> inspector
+    |> Mogrify.histogram
   end
 
 end

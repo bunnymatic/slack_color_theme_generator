@@ -15,6 +15,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: { SlackBot, []},
       extra_applications: [:logger]
     ]
   end
@@ -22,7 +23,8 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mogrify, github: "rcode5/mogrify", branch: "features/add-histogram-generator"},
+#      {:mogrify, github: "rcode5/mogrify", branch: "features/add-histogram-generator"},
+      {:mogrify, path: "../mogrify" },
       {:slack, "~> 0.12.0"},
       {:download, "~> 0.0.4"},
       {:tesla, "~> 0.7.0"},
