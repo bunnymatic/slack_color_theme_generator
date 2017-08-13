@@ -3,6 +3,7 @@ defmodule SlackClient do
   @moduledoc """
   Connect to slack and do things (like fetch images)
   """
+  require Logger
 
   use Inspector
   use Tesla
@@ -10,12 +11,15 @@ defmodule SlackClient do
   plug Tesla.Middleware.FollowRedirects, max_redirects: 3 # defaults to 5
 
   def fetch_image_from_slack(image_url) do
+    Logger.info( fn -> "Fetching image from slack" end)
+
     headers = %{ "Authorization" => "Bearer #{slack_token()}" }
     get(image_url, headers: headers)
     |> process_response
   end
 
   def fetch_image(image_url) do
+    Logger.info( fn -> "Fetching image from url" end)
     get(image_url)
     |> process_response
   end

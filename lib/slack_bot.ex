@@ -19,6 +19,7 @@ defmodule SlackBot do
   end
 
   def handle_event(message = %{type: "message", file: file}, slack, state) do
+    Logger.info( fn -> "Processing slack uploaded file" end)
     file
     |> Map.get(:url_private)
     |> SlackClient.fetch_image_from_slack
@@ -29,6 +30,7 @@ defmodule SlackBot do
   end
 
   def handle_event(message = %{type: "message", message: %{ attachments: attachments }}, slack, state) do
+    Logger.info( fn -> "Processing attachments" end)
     attachments
     |> Enum.map( fn %{:image_url => url} -> url end )
     |> Enum.each( fn img ->

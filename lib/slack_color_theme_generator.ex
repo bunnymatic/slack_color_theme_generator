@@ -12,6 +12,7 @@ defmodule SlackColorThemeGenerator do
       #ffffff,#bavava,...
 
   """
+  require Logger
 
   use Inspector
 
@@ -53,6 +54,7 @@ defmodule SlackColorThemeGenerator do
   end
 
   defp histogram(file) do
+    Logger.info( fn -> "Computing histogram" end)
     Mogrify.open(file)
     |> Mogrify.custom("-background", "white")
     |> Mogrify.custom("-alpha", "remove")
