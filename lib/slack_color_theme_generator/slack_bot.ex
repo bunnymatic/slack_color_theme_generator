@@ -1,17 +1,11 @@
-defmodule SlackBot do
+defmodule SlackColorThemeGenerator.SlackBot do
   @moduledoc """
   Listen and respond to slack events
   """
   require Logger
 
-  use Application
   use Inspector
   use Slack
-
-  def start(_type, _args) do
-    Logger.info( fn -> "Starting SlackBot..." end )
-    Slack.Bot.start_link(SlackBot, [], System.get_env("SLACK_API_TOKEN"))
-  end
 
   def handle_connect(slack, state) do
     Logger.info( fn -> "Connected to slack as #{slack.me.name}" end )
@@ -43,8 +37,7 @@ defmodule SlackBot do
     {:ok, state}
   end
 
-  # def handle_event(message = %{type: "message"}, slack, state) do
-  #   {:ok, state}
+  # def handle_event(_message = %{type: "message", text: text}, _slack, state) do
   # end
 
   def handle_event(_, _, state), do: {:ok, state}
@@ -59,7 +52,8 @@ defmodule SlackBot do
   def handle_info(_, _, state), do: {:ok, state}
 
   def send_theme({:ok, theme}, channel, slack) do
-    send_message("Theme it up!", channel, slack)
+    random_themer_message
+    |> send_message(channel, slack)
     send_message(theme, channel, slack)
   end
 
@@ -80,4 +74,16 @@ defmodule SlackBot do
     { :error, resp.status }
   end
 
+  defp random_themer_message do
+    ["Awesome :thumbsup:",
+     "Great idea! :cloud:",
+     "You're a natural designer! :lower_left_paintbrush:",
+     "Theme it up! :cat2:",
+     "That picture is awesome! :smile_cat:",
+     "You rule! :footprints:",
+     "So good! :100:",
+     "Hot! :thermometer:"
+     ]
+    |> Enum.random
+  end
 end
