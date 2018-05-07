@@ -26,6 +26,7 @@ defmodule SlackClient do
 
   defp process_response(resp) do
     if (resp.status != 200) do
+      resp |> inspector("SlackClient: failed to process response")
       { :error, resp }
     else
       {:ok, path} = Briefly.create

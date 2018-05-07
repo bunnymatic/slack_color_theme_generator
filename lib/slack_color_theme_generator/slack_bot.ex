@@ -57,6 +57,10 @@ defmodule SlackColorThemeGenerator.SlackBot do
     send_message(theme, channel, slack)
   end
 
+  # def send_theme({:error, theme}, channel, slack) do
+  #   send_message("I couldn't find 8 decent colors in that picture...", channel, slack)
+  # end
+
   def send_theme(_resp, _channel, _slack) do; end
 
   def process_image({ :ok, file_path }) do

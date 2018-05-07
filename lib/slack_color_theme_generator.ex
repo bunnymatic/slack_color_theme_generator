@@ -40,8 +40,18 @@ defmodule SlackColorThemeGenerator do
   defp join_hex_colors(hist) do
     colors = hist
     |> Enum.map(fn %{"hex" => hex} -> hex end)
-    if ((colors |> length) == 8) do
-      colors |> Enum.join(",")
+
+    colors |> make_eight_colors |> Enum.join(",")
+  end
+
+  defp make_eight_colors(colors) do
+    cond do
+      ((colors |> length) > 8) ->
+        colors |> Enum.slice(0,8)
+      ((colors |> length) < 8) ->
+        (colors ++ colors) |> make_eight_colors
+      true ->
+        colors
     end
   end
 
