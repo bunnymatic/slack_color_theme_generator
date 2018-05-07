@@ -7,15 +7,18 @@ defmodule SlackColorThemeGenerator.Mixfile do
       version: "0.1.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
-      escript: [main_module: SlackColorThemeGenerator.CLI],
       deps: deps()
     ]
   end
 
+  # def escript do
+  #   [main_module: SlackColorThemeGenerator.CLI]
+  # end
+
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: { SlackBot, []},
+      mod: { SlackColorThemeGenerator.App, []},
       extra_applications: [:logger]
     ]
   end
@@ -23,7 +26,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mogrify, github: "rcode5/mogrify", branch: "features/add-histogram-generator"},
+      {:mogrify, "~> 0.6.0"},
       {:slack, "~> 0.12.0"},
       {:download, "~> 0.0.4"},
       {:tesla, "~> 0.7.0"},
