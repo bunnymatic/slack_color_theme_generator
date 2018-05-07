@@ -4,7 +4,6 @@ defmodule SlackColorThemeGenerator.App do
   use Application
   use Supervisor
 
-  def init(:ok)
   def start(_type, _args) do
     children = [
       %{
@@ -21,8 +20,6 @@ defmodule SlackColorThemeGenerator.App do
 
     Logger.info( fn -> "Starting SlackBot..." end )
     Supervisor.start_link(children, opts)
-
-    #SlackColorThemeGenerator.Supervisor.start_link(name: SlackColorThemeGenerator.Supervisor)
   end
 
 end
