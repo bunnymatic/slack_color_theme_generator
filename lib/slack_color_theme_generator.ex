@@ -19,13 +19,27 @@ defmodule SlackColorThemeGenerator do
   def generate(file) do
     file
     |> histogram
+    |> validate
+    |> sort_and_join
+  end
+
+  defp sort_and_join(validated_histogram) when is_list(validated_histogram) do
+    validated_histogram
     |> sort
     |> join_hex_colors
+  end
+  defp sort_and_join(invalid_histogram), do: invalid_histogram
+
+  defp validate(histogram) do
+    if histogram |> is_narrow do
+      nil
+    else
+      histogram
+    end
   end
 
   defp sort(histogram) do
     result = histogram |> Enum.sort_by(&perceptive_lightness/1)
-
     if ( histogram |> is_dark ) do
       result |> Enum.reverse
     else
@@ -56,7 +70,9 @@ defmodule SlackColorThemeGenerator do
   end
 
   defp lightness_range(histogram) do
-    sorted = histogram |> sorted_by_lightness
+    sorted = histogram
+    |> Enum.map(&perceptive_lightness/1)
+    |> Enum.sort
     [ sorted |> Enum.at(0), sorted |> Enum.at(-1) ]
   end
 
@@ -68,15 +84,10 @@ defmodule SlackColorThemeGenerator do
 
   defp is_dark(histogram) do
     majority_luminance = histogram
-    |> sorted_by_lightness
-    |> Enum.at(-1)
-    majority_luminance > 128.0
-  end
-
-  defp sorted_by_lightness(histogram) do
-    histogram
     |> Enum.sort_by(fn %{"count" => count} -> count end )
     |> Enum.map(&perceptive_lightness/1)
+    |> Enum.at(-1)
+    majority_luminance > 128.0
   end
 
   defp histogram(file) do

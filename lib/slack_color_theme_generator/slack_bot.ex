@@ -84,8 +84,9 @@ defmodule SlackColorThemeGenerator.SlackBot do
 
   defp random_themer_error_message do
     [ "And what am I supposed to do with that?",
-      "¯\_(ツ)_/¯",
+      "¯\\_(ツ)_/¯",
       "Nice try.",
+      "Eh?",
       "Sometimes animated GIFs don't agree with my delicate disposition.",
       "You call that a picture?"
     ]
