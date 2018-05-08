@@ -52,14 +52,15 @@ defmodule SlackColorThemeGenerator.SlackBot do
   def handle_info(_, _, state), do: {:ok, state}
 
   def send_theme({:ok, theme}, channel, slack) do
-    random_themer_message
+    random_themer_message()
     |> send_message(channel, slack)
     send_message(theme, channel, slack)
   end
 
-  # def send_theme({:error, theme}, channel, slack) do
-  #   send_message("I couldn't find 8 decent colors in that picture...", channel, slack)
-  # end
+  def send_theme({:error, theme}, channel, slack) do
+    random_themer_error_message()
+    |> send_message(channel, slack)
+  end
 
   def send_theme(_resp, _channel, _slack) do; end
 
@@ -76,6 +77,15 @@ defmodule SlackColorThemeGenerator.SlackBot do
   def process_image({ :error, resp }) do
     IO.puts("fail #{resp.status}")
     { :error, resp.status }
+  end
+
+  defp random_themer_error_message do
+    [ "Whoa! What am I supposed to do with that?",
+      "¯\_(ツ)_/¯",
+      "Nice try",
+      "You call that a picture?"
+    ]
+    |> Enum.random
   end
 
   defp random_themer_message do

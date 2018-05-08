@@ -5,7 +5,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
     [
       app: :slack_color_theme_generator,
       version: "0.1.0",
-      elixir: "~> 1.5",
+      elixir: "~> 1.6",
       start_permanent: Mix.env == :prod,
       deps: deps()
     ]
@@ -26,7 +26,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mogrify, "~> 0.6.0"},
+      {:mogrify, git: "https://github.com/rcode5/mogrify", tag: "features/add-histogram-generator-support-rgba-images" },
       {:slack, "~> 0.12.0"},
       {:download, "~> 0.0.4"},
       {:tesla, "~> 0.7.0"},

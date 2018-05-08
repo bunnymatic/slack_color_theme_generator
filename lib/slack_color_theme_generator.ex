@@ -33,6 +33,9 @@ defmodule SlackColorThemeGenerator do
     end
   end
 
+  defp perceptive_lightness(%{"red" => red, "blue" => blue, "green" => green}) do
+    (0.299*red + 0.587*green + 0.114*blue)
+  end
   defp perceptive_lightness(entry = %{"red" => red, "blue" => blue, "green" => green}) do
     (0.299*red + 0.587*green + 0.114*blue)
   end
