@@ -36,9 +36,6 @@ defmodule SlackColorThemeGenerator do
   defp perceptive_lightness(%{"red" => red, "blue" => blue, "green" => green}) do
     (0.299*red + 0.587*green + 0.114*blue)
   end
-  defp perceptive_lightness(entry = %{"red" => red, "blue" => blue, "green" => green}) do
-    (0.299*red + 0.587*green + 0.114*blue)
-  end
 
   defp join_hex_colors(hist) do
     colors = hist
@@ -58,16 +55,32 @@ defmodule SlackColorThemeGenerator do
     end
   end
 
+  defp lightness_range(histogram) do
+    sorted = histogram |> sorted_by_lightness
+    [ sorted |> Enum.at(0), sorted |> Enum.at(-1) ]
+  end
+
+  defp is_narrow(histogram) do
+    range = histogram
+    |> lightness_range
+    (((range |> Enum.at(0)) - (range |> Enum.at(-1))) |> abs) < 50
+  end
+
   defp is_dark(histogram) do
     majority_luminance = histogram
-    |> Enum.sort_by(fn %{"count" => count} -> count end )
-    |> Enum.map(&perceptive_lightness/1)
+    |> sorted_by_lightness
     |> Enum.at(-1)
     majority_luminance > 128.0
   end
 
+  defp sorted_by_lightness(histogram) do
+    histogram
+    |> Enum.sort_by(fn %{"count" => count} -> count end )
+    |> Enum.map(&perceptive_lightness/1)
+  end
+
   defp histogram(file) do
-    Logger.info( fn -> "Computing histogram" end)
+    Logger.info( fn -> "Computing histogram from #{file}" end)
     Mogrify.open(file)
     |> Mogrify.custom("-background", "white")
     |> Mogrify.custom("-alpha", "remove")

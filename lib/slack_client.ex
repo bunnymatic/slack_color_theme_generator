@@ -19,14 +19,15 @@ defmodule SlackClient do
   end
 
   def fetch_image(image_url) do
-    Logger.info( fn -> "Fetching image from url" end)
+    Logger.info( fn -> "Fetching image from url #{image_url}" end)
     get(image_url)
     |> process_response
   end
 
   defp process_response(resp) do
     if (resp.status != 200) do
-      resp |> inspector("SlackClient: failed to process response")
+      Logger.error( fn -> "SlackClient: failed to process response " end)
+      Logger.error( fn -> "SlackClient: #{resp}" end)
       { :error, resp }
     else
       {:ok, path} = Briefly.create

@@ -58,8 +58,11 @@ defmodule SlackColorThemeGenerator.SlackBot do
   end
 
   def send_theme({:error, theme}, channel, slack) do
-    random_themer_error_message()
-    |> send_message(channel, slack)
+    if (theme == nil) do
+      random_themer_error_message()
+    else
+      theme
+    end |> send_message(channel, slack)
   end
 
   def send_theme(_resp, _channel, _slack) do; end
@@ -68,8 +71,8 @@ defmodule SlackColorThemeGenerator.SlackBot do
     theme = file_path |> SlackColorThemeGenerator.generate
 
     case theme do
-         "" -> { :error, "no theme created" }
-         nil -> { :error, "no theme created" }
+         "" -> { :error, nil }
+         nil -> { :error, nil }
          _ -> { :ok, theme }
        end
   end
@@ -80,9 +83,10 @@ defmodule SlackColorThemeGenerator.SlackBot do
   end
 
   defp random_themer_error_message do
-    [ "Whoa! What am I supposed to do with that?",
+    [ "And what am I supposed to do with that?",
       "¯\_(ツ)_/¯",
-      "Nice try",
+      "Nice try.",
+      "Sometimes animated GIFs don't agree with my delicate disposition.",
       "You call that a picture?"
     ]
     |> Enum.random
@@ -94,7 +98,7 @@ defmodule SlackColorThemeGenerator.SlackBot do
      "You're a natural designer! :lower_left_paintbrush:",
      "Theme it up! :cat2:",
      "That picture is awesome! :smile_cat:",
-     "You rule! :footprints:",
+     "You rule the school! :footprints:",
      "So good! :100:",
      "Hot! :thermometer:"
      ]
