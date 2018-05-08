@@ -26,7 +26,7 @@ defmodule SlackColorThemeGenerator.SlackBot do
   def handle_event(message = %{type: "message", message: %{ attachments: attachments }}, slack, state) do
     Logger.info( fn -> "Processing attachments" end)
     attachments
-    |> Enum.map( fn %{:image_url => url} -> url end )
+    |> Enum.map( &extract_url_from_message/1 )
     |> Enum.each( fn img ->
       img
       |> SlackClient.fetch_image
@@ -36,6 +36,9 @@ defmodule SlackColorThemeGenerator.SlackBot do
 
     {:ok, state}
   end
+
+  defp extract_url_from_message(%{:image_url => url}), do: url
+  defp extract_url_from_message(%{:thumb_url => url}), do: url
 
   # def handle_event(_message = %{type: "message", text: text}, _slack, state) do
   # end
