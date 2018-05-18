@@ -23,7 +23,7 @@ defmodule SlackColorThemeGenerator do
     v2: [3,0,1,4,6,7,2,5]
   }
 
-  def generate(file), do: generate(file, :v2)
+  def generate(file), do: generate(file, :v1)
 
   def generate(file, mapping) do
     file
