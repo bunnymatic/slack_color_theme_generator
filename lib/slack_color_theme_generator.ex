@@ -13,6 +13,7 @@ defmodule SlackColorThemeGenerator do
 
   """
   require Logger
+  require Color
 
   use Inspector
 
@@ -39,16 +40,12 @@ defmodule SlackColorThemeGenerator do
   end
 
   defp sort(histogram) do
-    result = histogram |> Enum.sort_by(&perceptive_lightness/1)
+    result = histogram |> Enum.sort_by(&Color.perceptive_lightness/1)
     if ( histogram |> is_dark ) do
       result |> Enum.reverse
     else
       result
     end
-  end
-
-  defp perceptive_lightness(%{"red" => red, "blue" => blue, "green" => green}) do
-    (0.299*red + 0.587*green + 0.114*blue)
   end
 
   defp join_hex_colors(hist) do
@@ -71,7 +68,7 @@ defmodule SlackColorThemeGenerator do
 
   defp lightness_range(histogram) do
     sorted = histogram
-    |> Enum.map(&perceptive_lightness/1)
+    |> Enum.map(&Color.perceptive_lightness/1)
     |> Enum.sort
     [ sorted |> Enum.at(0), sorted |> Enum.at(-1) ]
   end
@@ -85,7 +82,7 @@ defmodule SlackColorThemeGenerator do
   defp is_dark(histogram) do
     majority_luminance = histogram
     |> Enum.sort_by(fn %{"count" => count} -> count end )
-    |> Enum.map(&perceptive_lightness/1)
+    |> Enum.map(&Color.perceptive_lightness/1)
     |> Enum.at(-1)
     majority_luminance > 128.0
   end
