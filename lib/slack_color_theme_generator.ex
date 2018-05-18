@@ -17,19 +17,44 @@ defmodule SlackColorThemeGenerator do
 
   use Inspector
 
-  def generate(file) do
+  @mapping_methods %{
+    simple_sort: [0,1,2,3,4,5,6,7],
+    v1: [0,4,2,1,7,6,5,3],
+    v2: [3,0,1,4,6,7,2,5]
+  }
+
+  def generate(file), do: generate(file, :v2)
+
+  def generate(file, mapping) do
     file
     |> histogram
     |> validate
-    |> sort_and_join
+    |> sort_and_join(mapping)
   end
 
-  defp sort_and_join(validated_histogram) when is_list(validated_histogram) do
+  def lightness(theme) do
+    theme
+    |> String.split(",")
+    |> Enum.map(fn(k) -> k |> Color.perceptive_lightness |> :erlang.float_to_binary([decimals: 2]) end)
+    |> inspector("Theme Lightness")
+  end
+
+  def remap(array, order) do
+    order
+    |> Enum.map(fn(index) -> array |> Enum.at(index) end)
+  end
+
+  defp sort_and_join(validated_histogram, mapping) when is_list(validated_histogram) do
     validated_histogram
     |> sort
-    |> join_hex_colors
+    |> get_hex_colors
+    |> remap(@mapping_methods[mapping])
+    |> Enum.join(",")
   end
-  defp sort_and_join(invalid_histogram), do: invalid_histogram
+
+  defp sort_and_join(invalid_histogram, _mapping) do
+    invalid_histogram
+  end
 
   defp validate(histogram) do
     if histogram |> is_narrow do
@@ -48,11 +73,11 @@ defmodule SlackColorThemeGenerator do
     end
   end
 
-  defp join_hex_colors(hist) do
+  defp get_hex_colors(hist) do
     colors = hist
     |> Enum.map(fn %{"hex" => hex} -> hex end)
 
-    colors |> make_eight_colors |> Enum.join(",")
+    colors |> make_eight_colors
   end
 
   defp make_eight_colors(colors) do

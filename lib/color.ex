@@ -12,7 +12,7 @@ defmodule Color do
   @doc """
   return perceptive lightness for a color
   """
-  def perceptive_lightness(color = %Color{red: red, blue: blue, green: green, alpha: alpha}) do
+  def perceptive_lightness(%Color{red: red, blue: blue, green: green, alpha: alpha}) do
     (0.299*red + 0.587*green + 0.114*blue) * alpha/255.0
   end
 
@@ -35,7 +35,7 @@ defmodule Color do
 
 
   defp split_hexstring_into_colors(hex) when (byte_size(hex) == 8) or (byte_size(hex) == 6) do
-    color_map = [[ :red, :green, :blue, :alpha ],
+    [[ :red, :green, :blue, :alpha ],
      hex
      |> split_string_into_char_pairs
      |> Enum.map(&hex_to_color/1)
