@@ -23,7 +23,13 @@ defmodule SlackColorThemeGenerator.SlackBot do
     {:ok, state}
   end
 
+  def handle_event(_message = %{type: "message", message: %{ thread_ts: _thread_ts }}, _slack, state) do
+    Logger.info( fn -> "In a reply thread so keep quiet" end)
+    { :ok, state }
+  end
+
   def handle_event(message = %{type: "message", message: %{ attachments: attachments }}, slack, state) do
+    message[:thread_ts] |> inspector
     Logger.info( fn -> "Processing attachments" end)
     attachments
     |> Enum.map( &extract_url_from_message/1 )
@@ -36,9 +42,6 @@ defmodule SlackColorThemeGenerator.SlackBot do
 
     {:ok, state}
   end
-
-  defp extract_url_from_message(%{:image_url => url}), do: url
-  defp extract_url_from_message(%{:thumb_url => url}), do: url
 
   # def handle_event(_message = %{type: "message", text: text}, _slack, state) do
   # end
@@ -85,6 +88,9 @@ defmodule SlackColorThemeGenerator.SlackBot do
     { :error, resp.status }
   end
 
+  defp extract_url_from_message(%{:image_url => url}), do: url
+  defp extract_url_from_message(%{:thumb_url => url}), do: url
+
   defp random_themer_error_message do
     [ "And what am I supposed to do with that?",
       "¯\\_(ツ)_/¯",
@@ -99,9 +105,12 @@ defmodule SlackColorThemeGenerator.SlackBot do
   defp random_themer_message do
     ["Awesome :thumbsup:",
      "Great idea! :cloud:",
+     "Color me dazzled! :coffee:",
+     "A regular Leonardo :paw_prints:",
+     "Look out, Rauschenberg :space_invader:",
      "You're a natural designer! :lower_left_paintbrush:",
      "Theme it up! :cat2:",
-     "That picture is awesome! :smile_cat:",
+     "That picture is super! :smile_cat:",
      "You rule the school! :footprints:",
      "So good! :100:",
      "Hot! :thermometer:"
