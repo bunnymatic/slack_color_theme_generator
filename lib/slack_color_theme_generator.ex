@@ -120,6 +120,6 @@ defmodule SlackColorThemeGenerator do
     |> Mogrify.custom("-colors", 8)
     |> Mogrify.custom("+dither")
     |> Mogrify.histogram
+    |> Enum.slice(0,8)
   end
-
 end

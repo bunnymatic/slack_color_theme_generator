@@ -6,6 +6,7 @@ defmodule SlackColorThemeGeneratorTest do
   use Inspector
 
   @fixture Path.join(__DIR__, "fixtures/rainbow.jpg")
+  @anim_fixture Path.join(__DIR__, "fixtures/anim.gif")
   @narrow_fixture Path.join(__DIR__, "fixtures/narrow.png")
 
   test ".generate returns a v2 theme given the mapping" do
@@ -25,8 +26,13 @@ defmodule SlackColorThemeGeneratorTest do
   end
 
   test ".generate returns nil if the range is too narrow" do
-    (@narrow_fixture |> SlackColorThemeGenerator.generate)  |> inspector
     refute (@narrow_fixture |> SlackColorThemeGenerator.generate)
   end
+
+  test ".generates the right histogram for a multiframe gif" do
+    (@anim_fixture |> SlackColorThemeGenerator.generate)  |> inspector("test result")
+    assert (@anim_fixture |> SlackColorThemeGenerator.generate) == "#D6B18E,#7B8D91,#CDA275,#C2AF9D,#250F09,#663522,#9D6041,#B38E67"
+  end
+
 
 end

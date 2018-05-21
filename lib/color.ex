@@ -33,7 +33,6 @@ defmodule Color do
   def perceptive_lightness("#" <> hex), do: hex |> perceptive_lightness
   def perceptive_lightness(_), do: %Color{} |> perceptive_lightness
 
-
   defp split_hexstring_into_colors(hex) when (byte_size(hex) == 8) or (byte_size(hex) == 6) do
     [[ :red, :green, :blue, :alpha ],
      hex
@@ -64,5 +63,6 @@ defmodule Color do
   defp atomize_keys(map), do: map |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
 
   defp color_struct_from_map(map), do: struct(Color, map)
+
 
 end
