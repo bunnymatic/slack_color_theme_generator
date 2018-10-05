@@ -4,7 +4,6 @@ defmodule SlackColorThemeGenerator.SlackBot do
   """
   require Logger
 
-  use Inspector
   use Slack
 
   def handle_connect(slack, state) do
@@ -29,7 +28,6 @@ defmodule SlackColorThemeGenerator.SlackBot do
   end
 
   def handle_event(message = %{type: "message", message: %{ attachments: attachments }}, slack, state) do
-    message[:thread_ts] |> inspector
     Logger.info( fn -> "Processing attachments" end)
     attachments
     |> Enum.map( &extract_url_from_message/1 )
