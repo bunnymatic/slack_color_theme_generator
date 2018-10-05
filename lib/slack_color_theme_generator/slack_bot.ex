@@ -11,6 +11,9 @@ defmodule SlackColorThemeGenerator.SlackBot do
     {:ok, state}
   end
 
+  # match one file
+  # On 10/4/2018 it appears this matcher doesn't hit any more.  Slack appears
+  # to have changed the API to send `files: files`
   def handle_event(message = %{type: "message", file: file}, slack, state) do
     Logger.info( fn -> "Processing slack uploaded file" end)
     file
@@ -18,6 +21,20 @@ defmodule SlackColorThemeGenerator.SlackBot do
     |> SlackClient.fetch_image_from_slack
     |> process_image
     |> send_theme(message.channel, slack)
+
+    {:ok, state}
+  end
+
+  def handle_event(message = %{type: "message", files: files}, slack, state) do
+    Logger.info( fn -> "Processing slack uploaded files" end)
+    files
+    |> Enum.map(fn(f) -> f |> Map.get(:url_private) end)
+    |> Enum.each(fn url ->
+      url
+      |> SlackClient.fetch_image_from_slack
+      |> process_image
+      |> send_theme(message.channel, slack)
+    end)
 
     {:ok, state}
   end
