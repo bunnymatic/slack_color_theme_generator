@@ -5,8 +5,6 @@ defmodule Color do
 
   require Logger
 
-  use Inspector
-
   defstruct red: 0, green: 0, blue: 0, alpha: 255, hex: ""
 
   @doc """

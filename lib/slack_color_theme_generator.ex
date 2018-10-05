@@ -8,14 +8,12 @@ defmodule SlackColorThemeGenerator do
 
   ## Examples
 
-      % ./slack_color_theme_generator my_file.png
-      #ffffff,#bavava,...
+    "my_file.png" |> SlackColorThemeGenerator.generate
+    >  "#ffffff,#bavava,..."
 
   """
   require Logger
   require Color
-
-  use Inspector
 
   @mapping_methods %{
     simple_sort: [0,1,2,3,4,5,6,7],
@@ -36,7 +34,6 @@ defmodule SlackColorThemeGenerator do
     theme
     |> String.split(",")
     |> Enum.map(fn(k) -> k |> Color.perceptive_lightness |> :erlang.float_to_binary([decimals: 2]) end)
-    |> inspector("Theme Lightness")
   end
 
   def remap(array, order) do

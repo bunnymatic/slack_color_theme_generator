@@ -5,7 +5,6 @@ defmodule SlackClient do
   """
   require Logger
 
-  use Inspector
   use Tesla
 
   plug Tesla.Middleware.FollowRedirects, max_redirects: 3 # defaults to 5
