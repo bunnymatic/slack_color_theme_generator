@@ -26,7 +26,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mogrify, "~> 0.6.1"},
+      {:mogrify, "~> 0.7.3"},
       {:slack, "~> 0.12.0"},
       {:download, "~> 0.0.4"},
       {:tesla, "~> 0.7.0"},
