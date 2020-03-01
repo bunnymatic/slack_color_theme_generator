@@ -29,7 +29,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
       {:mogrify, "~> 0.7.3"},
       {:slack, "~> 0.12.0"},
       {:download, "~> 0.0.4"},
-      {:tesla, "~> 0.7.0"},
+      {:tesla, "~> 1.3.2"},
       {:poison, ">= 1.0.0"},
       {:briefly, "~> 0.3"}
       # {:dep_from_hexpm, "~> 0.3.0"},
