@@ -27,7 +27,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
   defp deps do
     [
       {:mogrify, "~> 0.7.3"},
-      {:slack, "~> 0.12.0"},
+      {:slack, "~> 0.23.2"},
       {:download, "~> 0.0.4"},
       {:tesla, "~> 0.7.0"},
       {:poison, ">= 1.0.0"},
