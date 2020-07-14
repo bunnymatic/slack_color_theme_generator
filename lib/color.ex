@@ -45,7 +45,7 @@ defmodule Color do
   defp split_string_into_char_pairs(str) do
     str
     |> String.codepoints()
-    |> Enum.chunk(2)
+    |> Enum.chunk_every(2)
     |> Enum.map(&Enum.join/1)
   end
 

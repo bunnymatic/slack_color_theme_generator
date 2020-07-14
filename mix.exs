@@ -23,12 +23,14 @@ defmodule SlackColorThemeGenerator.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mogrify, "~> 0.7.3"},
-      {:slack, "~> 0.12.0"},
+      {:briefly, "~> 0.3"},
       {:download, "~> 0.0.4"},
-      {:tesla, "~> 0.7.0"},
+      {:hackney, "~> 1.15.2"},
+      {:jason, ">= 1.0.0"},
+      {:mogrify, "~> 0.7.3"},
       {:poison, ">= 1.0.0"},
-      {:briefly, "~> 0.3"}
+      {:slack, "~> 0.12.0"},
+      {:tesla, "~> 1.3.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
