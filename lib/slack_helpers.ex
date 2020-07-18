@@ -1,4 +1,4 @@
-defmodule SlackClient do
+defmodule SlackHelpers do
   @moduledoc """
   Connect to slack and do things (like fetch images)
   """
@@ -27,8 +27,8 @@ defmodule SlackClient do
 
   defp process_response(resp) do
     if resp.status != 200 do
-      Logger.error(fn -> "SlackClient: failed to process response " end)
-      Logger.error(fn -> "SlackClient: #{resp}" end)
+      Logger.error(fn -> "SlackHelpers: failed to process response " end)
+      Logger.error(fn -> "SlackHelpers: #{resp}" end)
       {:error, resp}
     else
       {:ok, path} = Briefly.create()

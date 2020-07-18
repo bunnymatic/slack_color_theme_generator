@@ -1,4 +1,4 @@
-defmodule SlackColorThemeGenerator do
+defmodule ImageProcessor.Impl do
   @moduledoc """
   Generate a Slack color theme (8 hex colors) from an image
   """
@@ -8,10 +8,11 @@ defmodule SlackColorThemeGenerator do
 
   ## Examples
 
-    "my_file.png" |> SlackColorThemeGenerator.generate
+    "my_file.png" |> ImageProcessor.Impl.compute_theme
     >  "#ffffff,#bavava,..."
 
   """
+
   require Logger
   require Color
 
@@ -21,9 +22,9 @@ defmodule SlackColorThemeGenerator do
     v2: [3, 0, 1, 4, 6, 7, 2, 5]
   }
 
-  def generate(file), do: generate(file, :v1)
+  def compute_theme(file), do: compute_theme(file, :v1)
 
-  def generate(file, mapping) do
+  def compute_theme(file, mapping) do
     file
     |> histogram
     |> validate
