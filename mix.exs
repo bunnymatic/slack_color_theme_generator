@@ -6,17 +6,16 @@ defmodule SlackColorThemeGenerator.Mixfile do
       app: :slack_color_theme_generator,
       version: "0.1.0",
       elixir: "~> 1.6",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       escript: [main_module: SlackColorThemeGenerator.CLI],
       deps: deps()
     ]
   end
 
-
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: { SlackColorThemeGenerator.App, []},
+      mod: {SlackColorThemeGenerator.App, []},
       extra_applications: [:logger]
     ]
   end
