@@ -1,4 +1,4 @@
-defmodule SlackColorThemeGenerator.SlackBot do
+defmodule SlackEventHandler do
   @moduledoc """
   Listen and respond to slack events
   """
@@ -104,7 +104,7 @@ defmodule SlackColorThemeGenerator.SlackBot do
   end
 
   def process_image({:ok, file_path}) do
-    theme = file_path |> ImageProcessor.compute_theme()
+    theme = ImageProcessor.compute_theme(file_path)
 
     case theme do
       "" -> {:error, nil}
