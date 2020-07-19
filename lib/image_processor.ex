@@ -1,8 +1,8 @@
 defmodule ImageProcessor do
+  require Logger
   @server ImageProcessor.Server
   def start_link(initial_state) do
-    IO.puts("Starting image processor with #{initial_state}")
-    IO.puts(__MODULE__)
+    Logger.info(fn -> "Starting ImageProcessor" end)
     GenServer.start_link(@server, initial_state, name: @server)
   end
 

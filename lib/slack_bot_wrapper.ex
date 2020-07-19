@@ -1,4 +1,5 @@
 defmodule SlackBotWrapper do
+  require Logger
   def init(state) do
     {:ok, state}
   end
@@ -8,9 +9,7 @@ defmodule SlackBotWrapper do
   end
 
   def start_link(token) do
-    IO.puts("Starting slack handler with #{token}")
-    IO.puts(__MODULE__)
-    # can we get the token from initial state?
+    Logger.info(fn -> "Starting #{__MODULE__} with #{token}" end)
     if token do
       Slack.Bot.start_link(SlackEventHandler, [], token)
     else
@@ -18,9 +17,7 @@ defmodule SlackBotWrapper do
     end
   end
 
-  def child_spec(opts) do
-    token = System.get_env("SLACK_API_TOKEN")
-
+  def child_spec([token]) do
     %{
       id: __MODULE__,
       start: {__MODULE__, :start_link, [token]},
