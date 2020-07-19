@@ -1,5 +1,6 @@
 defmodule SlackBotWrapper do
   require Logger
+
   def init(state) do
     {:ok, state}
   end
@@ -10,6 +11,7 @@ defmodule SlackBotWrapper do
 
   def start_link(token) do
     Logger.info(fn -> "Starting #{__MODULE__} with #{token}" end)
+
     if token do
       Slack.Bot.start_link(SlackEventHandler, [], token)
     else
