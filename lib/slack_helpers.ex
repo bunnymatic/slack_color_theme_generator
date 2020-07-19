@@ -10,19 +10,23 @@ defmodule SlackHelpers do
   plug(Tesla.Middleware.FollowRedirects, max_redirects: 3)
 
   def fetch_image_from_slack(image_url) do
-    Logger.info(fn -> "Fetching image from slack" end)
+    Logger.info(fn -> "Fetching image from slack #{image_url}" end)
 
-    headers = %{"Authorization" => "Bearer #{slack_token()}"}
+    headers = [{"authorization", "Bearer #{slack_token()}"}]
 
-    get(image_url, headers: headers)
-    |> process_response
+    case get(image_url, headers: headers) do
+      {:ok, response} -> response |> process_response
+      {_, response} -> {:error, response}
+    end
   end
 
   def fetch_image(image_url) do
     Logger.info(fn -> "Fetching image from url #{image_url}" end)
 
-    get(image_url)
-    |> process_response
+    case get(image_url) do
+      {:ok, response} -> response |> process_response
+      {_, response} -> {:error, response}
+    end
   end
 
   defp process_response(resp) do
@@ -31,12 +35,12 @@ defmodule SlackHelpers do
       Logger.error(fn -> "SlackHelpers: #{resp}" end)
       {:error, resp}
     else
-      {:ok, path} = Briefly.create()
-
-      path
-      |> File.write(resp.body)
-
-      {:ok, path}
+      case Briefly.create() do
+        {:ok, path} ->
+          path |> File.write(resp.body)
+          {:ok, path}
+        {:error, error} -> {:error, error}
+      end
     end
   end
 
