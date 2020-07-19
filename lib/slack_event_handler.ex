@@ -3,6 +3,7 @@ defmodule SlackEventHandler do
   Listen and respond to slack events
   """
   require Logger
+  require SlackMessaging
 
   use Slack
 
@@ -69,11 +70,19 @@ defmodule SlackEventHandler do
     {:ok, state}
   end
 
-  # def handle_event(_message = %{type: "message", text: text}, _slack, state) do
-  # end
+  def handle_event(message = %{type: "message", text: text}, slack, state) do
+    # handle message that matches "#ffffff ahatever ?"
+    color_regex = ~r/\#([0-9a-f]{6})\b.*\?$/i
+
+    case color_regex |> Regex.run(text) do
+      nil -> {:ok, state}
+      [_, color] -> process_color_message(color, message.channel, slack, state)
+    end
+  end
 
   def handle_event(_, _, state), do: {:ok, state}
 
+  # Not sure how this guy get's called
   def handle_info({:message, text, channel}, slack, state) do
     IO.puts("Sending your message, captain!")
 
@@ -85,7 +94,7 @@ defmodule SlackEventHandler do
   def handle_info(_, _, state), do: {:ok, state}
 
   def send_theme({:ok, theme}, channel, slack) do
-    random_themer_message()
+    SlackMessaging.theme_message()
     |> send_message(channel, slack)
 
     send_message(theme, channel, slack)
@@ -93,7 +102,7 @@ defmodule SlackEventHandler do
 
   def send_theme({:error, theme}, channel, slack) do
     if theme == nil do
-      random_themer_error_message()
+      SlackMessaging.error_message()
     else
       theme
     end
@@ -114,39 +123,21 @@ defmodule SlackEventHandler do
   end
 
   def process_image({:error, resp}) do
-    IO.puts("fail #{resp.status}")
+    Logger.error("Unable to process image")
+    Logger.error(resp.status)
     {:error, resp.status}
   end
 
   defp extract_url_from_message(%{:image_url => url}), do: url
   defp extract_url_from_message(%{:thumb_url => url}), do: url
 
-  defp random_themer_error_message do
-    [
-      "And what am I supposed to do with that?",
-      "¯\\_(ツ)_/¯",
-      "Nice try.",
-      "Eh?",
-      "Sometimes animated GIFs don't agree with my delicate disposition.",
-      "You call that a picture?"
-    ]
-    |> Enum.random()
-  end
+  def process_color_message(color, channel, slack, state) do
+    Logger.info(fn -> "Got color naming question : #{color}" end)
+    color
+    |> ColorNamesOrg.search()
+    |> SlackMessaging.color_name_message()
+    |> send_message(channel, slack)
 
-  defp random_themer_message do
-    [
-      "Awesome :thumbsup:",
-      "Great idea! :cloud:",
-      "Color me dazzled! :coffee:",
-      "A regular Leonardo :paw_prints:",
-      "Look out, Rauschenberg :space_invader:",
-      "You're a natural designer! :lower_left_paintbrush:",
-      "Theme it up! :cat2:",
-      "That picture is super! :smile_cat:",
-      "You rule the school! :footprints:",
-      "So good! :100:",
-      "Hot! :thermometer:"
-    ]
-    |> Enum.random()
+    {:ok, state}
   end
 end
