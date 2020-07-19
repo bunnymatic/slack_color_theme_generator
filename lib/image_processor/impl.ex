@@ -104,6 +104,7 @@ defmodule ImageProcessor.Impl do
     [sorted |> Enum.at(0), sorted |> Enum.at(-1)]
   end
 
+  defp is_narrow(histogram) when is_list(histogram) and length(histogram) < 6, do: true
   defp is_narrow(histogram) do
     range =
       histogram

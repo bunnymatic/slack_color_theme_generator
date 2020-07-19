@@ -5,6 +5,7 @@ defmodule ImageProcessorImplTest do
   @fixture Path.join(__DIR__, "../../fixtures/rainbow.jpg")
   @anim_fixture Path.join(__DIR__, "../../fixtures/anim.gif")
   @narrow_fixture Path.join(__DIR__, "../../fixtures/narrow.png")
+  @two_color_fixture Path.join(__DIR__, "../../fixtures/2colors.png")
 
   test ".compute_theme returns a v2 theme given the mapping" do
     assert @fixture |> ImageProcessor.Impl.compute_theme(:v2) ==
@@ -28,6 +29,10 @@ defmodule ImageProcessorImplTest do
 
   test ".compute_theme returns nil if the range is too narrow" do
     refute @narrow_fixture |> ImageProcessor.Impl.compute_theme()
+  end
+
+  test ".compute_theme returns nil if there aren't enough unique colors" do
+    refute @two_color_fixture |> ImageProcessor.Impl.compute_theme()
   end
 
   test ".compute_themes the right histogram for a multiframe gif" do
