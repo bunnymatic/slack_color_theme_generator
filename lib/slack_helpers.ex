@@ -39,7 +39,9 @@ defmodule SlackHelpers do
         {:ok, path} ->
           path |> File.write(resp.body)
           {:ok, path}
-        {:error, error} -> {:error, error}
+
+        {:error, error} ->
+          {:error, error}
       end
     end
   end

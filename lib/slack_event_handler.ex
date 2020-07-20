@@ -4,6 +4,7 @@ defmodule SlackEventHandler do
   """
   require Logger
   require SlackMessaging
+  alias SlackEventHandler.Impl
 
   use Slack
 
@@ -12,32 +13,12 @@ defmodule SlackEventHandler do
     {:ok, state}
   end
 
-  # match one file
-  # On 10/4/2018 it appears this matcher doesn't hit any more.  Slack appears
-  # to have changed the API to send `files: files`
-  def handle_event(message = %{type: "message", file: file}, slack, state) do
-    Logger.info(fn -> "Processing slack uploaded file" end)
-
-    file
-    |> Map.get(:url_private)
-    |> SlackHelpers.fetch_image_from_slack()
-    |> process_image
-    |> send_theme(message.channel, slack)
-
-    {:ok, state}
-  end
-
   def handle_event(message = %{type: "message", files: files}, slack, state) do
     Logger.info(fn -> "Processing slack uploaded files" end)
 
     files
-    |> Enum.map(fn f -> f |> Map.get(:url_private) end)
-    |> Enum.each(fn url ->
-      url
-      |> SlackHelpers.fetch_image_from_slack()
-      |> process_image
-      |> send_theme(message.channel, slack)
-    end)
+    |> Impl.handle_files_upload()
+    |> send_themes(message.channel, slack)
 
     {:ok, state}
   end
@@ -47,7 +28,6 @@ defmodule SlackEventHandler do
         _slack,
         state
       ) do
-    Logger.info(fn -> "In a reply thread so keep quiet" end)
     {:ok, state}
   end
 
@@ -59,32 +39,30 @@ defmodule SlackEventHandler do
     Logger.info(fn -> "Processing attachments" end)
 
     attachments
-    |> Enum.map(&extract_url_from_message/1)
-    |> Enum.each(fn img ->
-      img
-      |> SlackHelpers.fetch_image()
-      |> process_image
-      |> send_theme(message.channel, slack)
-    end)
+    |> Impl.handle_attachments()
+    |> send_themes(message.channel, slack)
 
     {:ok, state}
   end
 
   def handle_event(message = %{type: "message", text: text}, slack, state) do
     # handle message that matches "#ffffff ahatever ?"
-    color_regex = ~r/\#([0-9a-f]{6})\b.*\?$/i
+    color_regex = ~r/\#([0-9a-f]{6})\W.*\?$/i
 
-    case color_regex |> Regex.run(text) do
+    case color_regex |> Regex.run(text |> IO.inspect() |> strip_newlines |> IO.inspect()) do
       nil -> {:ok, state}
       [_, color] -> process_color_message(color, message.channel, slack, state)
     end
+
+    {:ok, state}
   end
 
   def handle_event(_, _, state), do: {:ok, state}
 
-  # Not sure how this guy get's called
+  # From the docs: called when any other message is received in the process mailbox.
+  # Not sure when it actually hits.
   def handle_info({:message, text, channel}, slack, state) do
-    IO.puts("Sending your message, captain!")
+    Logger.info("Sending your message, captain!")
 
     send_message(text, channel, slack)
 
@@ -93,51 +71,42 @@ defmodule SlackEventHandler do
 
   def handle_info(_, _, state), do: {:ok, state}
 
-  def send_theme({:ok, theme}, channel, slack) do
-    SlackMessaging.theme_message()
-    |> send_message(channel, slack)
+  def send_themes([], _channel, _slack), do: nil
 
-    send_message(theme, channel, slack)
+  def send_themes(themes, channel, slack) do
+    themes
+    |> Enum.each(fn handled ->
+      case handled do
+        {:ok, theme} ->
+          SlackMessaging.theme_message()
+          |> send_message(channel, slack)
+
+          theme |> send_message(channel, slack)
+
+        {:error, nil} ->
+          SlackMessaging.error_message() |> send_message(channel, slack)
+
+        {:error, theme} ->
+          theme |> send_message(channel, slack)
+
+        _ ->
+          nil
+      end
+    end)
   end
-
-  def send_theme({:error, theme}, channel, slack) do
-    if theme == nil do
-      SlackMessaging.error_message()
-    else
-      theme
-    end
-    |> send_message(channel, slack)
-  end
-
-  def send_theme(_resp, _channel, _slack) do
-  end
-
-  def process_image({:ok, file_path}) do
-    theme = ImageProcessor.compute_theme(file_path)
-
-    case theme do
-      "" -> {:error, nil}
-      nil -> {:error, nil}
-      _ -> {:ok, theme}
-    end
-  end
-
-  def process_image({:error, resp}) do
-    Logger.error("Unable to process image")
-    Logger.error(resp.status)
-    {:error, resp.status}
-  end
-
-  defp extract_url_from_message(%{:image_url => url}), do: url
-  defp extract_url_from_message(%{:thumb_url => url}), do: url
 
   def process_color_message(color, channel, slack, state) do
     Logger.info(fn -> "Got color naming question : #{color}" end)
+
     color
     |> ColorNamesOrg.search()
     |> SlackMessaging.color_name_message()
     |> send_message(channel, slack)
 
     {:ok, state}
+  end
+
+  defp strip_newlines(text) do
+    ~r/[\r|\n]/ |> Regex.replace(text, " ")
   end
 end

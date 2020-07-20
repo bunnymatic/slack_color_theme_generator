@@ -24,7 +24,7 @@ defmodule ImageProcessorImplTest do
 
   test ".compute_theme returns a v1 slack theme by default" do
     assert @fixture |> ImageProcessor.Impl.compute_theme() ==
-             "#FFFFFF,#0EBE0A,#F5E805,#F0CFD6,#1A0F98,#0485DD,#ED341C,#D1A6B0"
+             @fixture |> ImageProcessor.Impl.compute_theme(:v1)
   end
 
   test ".compute_theme returns nil if the range is too narrow" do
