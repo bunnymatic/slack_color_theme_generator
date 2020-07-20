@@ -3,11 +3,15 @@ defmodule SlackColorThemeGenerator.Supervisor do
 
   def init(:ok) do
     token = System.get_env("SLACK_API_TOKEN")
-    children = [
-      ImageProcessor,
-      ColorNamesOrg,
-      token && {SlackBotWrapper, [token]}
-    ] |> Enum.filter(&(&1))
+
+    children =
+      [
+        ImageProcessor,
+        ColorNamesOrg,
+        token && {SlackBotWrapper, [token]}
+      ]
+      |> Enum.filter(& &1)
+
     Supervisor.init(children, strategy: :one_for_one)
   end
 

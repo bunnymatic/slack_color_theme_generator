@@ -31,15 +31,7 @@ defmodule ImageProcessor.Impl do
     |> sort_and_join(mapping)
   end
 
-  def lightness(theme) do
-    theme
-    |> String.split(",")
-    |> Enum.map(fn k ->
-      k |> Color.perceptive_lightness() |> :erlang.float_to_binary(decimals: 2)
-    end)
-  end
-
-  def remap(array, order) do
+  defp remap(array, order) do
     order
     |> Enum.map(fn index -> array |> Enum.at(index) end)
   end
@@ -105,6 +97,7 @@ defmodule ImageProcessor.Impl do
   end
 
   defp is_narrow(histogram) when is_list(histogram) and length(histogram) < 6, do: true
+
   defp is_narrow(histogram) do
     range =
       histogram

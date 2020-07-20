@@ -6,7 +6,8 @@ defmodule SlackMessaging do
       "Nice try.",
       "Eh?",
       "Sometimes animated GIFs don't agree with my delicate disposition.",
-      "You call that a picture?"
+      "You call that a picture?",
+      "I got nothin'."
     ]
     |> Enum.random()
   end
@@ -14,6 +15,7 @@ defmodule SlackMessaging do
   def color_name_message(nil), do: color_name_message()
   def color_name_message(""), do: color_name_message()
   def color_name_message(<<h, c::binary>>) when h in ' \t\n\r', do: color_name_message(c)
+
   def color_name_message(color) do
     msg_fn =
       [
