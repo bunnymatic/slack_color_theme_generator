@@ -28,7 +28,6 @@ defmodule SlackEventHandler do
         _slack,
         state
       ) do
-    Logger.info(fn -> "In a reply thread so keep quiet" end)
     {:ok, state}
   end
 
