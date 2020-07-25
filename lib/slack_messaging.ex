@@ -12,32 +12,35 @@ defmodule SlackMessaging do
     |> Enum.random()
   end
 
-  def color_name_message(nil), do: color_name_message()
-  def color_name_message(""), do: color_name_message()
-  def color_name_message(<<h, c::binary>>) when h in ' \t\n\r', do: color_name_message(c)
+  # def color_name_message(nil), do: color_name_message()
+  # def color_name_message(""), do: color_name_message()
+  # def color_name_message(<<h, c::binary>>) when h in ' \t\n\r', do: color_name_message(c)
 
-  def color_name_message(color) do
+  def color_name_message(_entry = %{color: color, name: nil}), do: color_name_message(color)
+  def color_name_message(_entry = %{color: color, name: ""}), do: color_name_message(color)
+  def color_name_message(_entry = %{color: color, name: name}) do
     msg_fn =
       [
-        &"I think that should be called '#{&1}'.",
-        &"Feels like maybe '#{&1}'.",
-        &"What about '#{&1}'?",
-        &"That's my favorite color, '#{&1}'!",
-        &"I'd call that '#{&1}'."
+        &"I think that #{&1} should be called '#{&2}'.",
+        &"#{&1} feels like maybe '#{&2}'.",
+        &"What about '#{&2}' for #{&1}?",
+        &"#{&1} is totally my favorite color, '#{&2}'!",
+        &"I'd call #{&1} '#{&2}'."
       ]
       |> Enum.random()
 
-    msg_fn.(color)
+    msg_fn.(color, name)
   end
 
-  def color_name_message() do
-    [
-      "I have no idea what I'd call that.",
-      "I got nothing.",
-      "Are you sure that's a color?",
-      "Is this a color that only dogs can see?"
+  def color_name_message(color) do
+    msg_fn = [
+      &"I have no idea what I'd call #{&1}.",
+      &"I got nothing for #{&1}.",
+      &"Are you sure #{&1} is a color?",
+      &"Is #{&1} a color that only dogs can see?"
     ]
     |> Enum.random()
+    msg_fn.(color)
   end
 
   def theme_message do

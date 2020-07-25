@@ -45,15 +45,19 @@ defmodule SlackEventHandler do
     {:ok, state}
   end
 
-  def handle_event(message = %{type: "message", text: text}, slack, state) do
-    # handle message that matches "#ffffff ahatever ?"
-    color_regex = ~r/\#([0-9a-f]{6})\W.*\?$/i
-
-    case color_regex |> Regex.run(text |> IO.inspect() |> strip_newlines |> IO.inspect()) do
-      nil -> {:ok, state}
-      [_, color] -> process_color_message(color, message.channel, slack, state)
-    end
-
+  # blocks include colors already parsed by Slack.
+  def handle_event(message = %{type: "message", blocks: [%{ elements: elements }]}, slack, state) do
+    colors = elements
+    |> Enum.map(fn elements ->
+      elements[:elements]
+      |> IO.inspect
+      |> Enum.map(&extract_value_from_element/1)
+      |> Enum.filter( &(&1) )
+    end) |> List.flatten |> Enum.uniq
+    colors |>
+      Enum.each(
+        fn color -> process_color_message(color, message.channel, slack, state) end
+      )
     {:ok, state}
   end
 
@@ -109,4 +113,10 @@ defmodule SlackEventHandler do
   defp strip_newlines(text) do
     ~r/[\r|\n]/ |> Regex.replace(text, " ")
   end
+
+  defp extract_value_from_element(%{type: "color", value: value}) do
+    value |> String.downcase |> String.replace_prefix("#", "")
+  end
+  defp extract_value_from_element(_), do: nil
+
 end
