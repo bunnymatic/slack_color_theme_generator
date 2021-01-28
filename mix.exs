@@ -25,7 +25,7 @@ defmodule SlackColorThemeGenerator.Mixfile do
     [
       {:briefly, "~> 0.3"},
       {:download, "~> 0.0.4"},
-      {:hackney, "~> 1.16.0"},
+      {:hackney, "~> 1.17.0"},
       {:jason, ">= 1.0.0"},
       #{:mogrify, path: "../mogrify"},
       {:mogrify, git: "https://github.com/rcode5/mogrify.git"},
