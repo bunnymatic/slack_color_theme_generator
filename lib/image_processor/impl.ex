@@ -69,7 +69,7 @@ defmodule ImageProcessor.Impl do
   defp get_hex_colors(hist) do
     colors =
       hist
-      |> Enum.map(fn %{"hex" => hex} -> hex end)
+      |> Enum.map(fn %{"hex" => hex} -> hex |> String.slice(0..6) end)
 
     colors |> make_eight_colors
   end
