@@ -3,6 +3,10 @@
 use Mix.Config
 
 config :tesla, adapter: Tesla.Adapter.Hackney
+#
+# preferred based on phoenix info message
+#
+# config :phoenix, :json_library, Jason
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
